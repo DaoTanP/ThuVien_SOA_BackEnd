@@ -50,7 +50,6 @@ router.post('/register', userExists, async (req, res) => {
         username: req.body.username,
         password: req.body.password,
         displayName: req.body.displayName || undefined,
-        role: req.body.role
     });
     try {
         const nUser = await user.save();
