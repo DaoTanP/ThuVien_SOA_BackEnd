@@ -23,7 +23,16 @@ router.post('/', async (req, res) => {
         res.status(404).json({ message: 'Missing book id' });
         return;
     }
+
     try {
+        const bDate = new Date(borrowDate);
+        const rDate = new Date(returnDate);
+
+        if (bDate.getTime() > rDate.getTime()) {
+            res.status(400).json({ message: 'Borrow date can not be after return date' });
+            return;
+        }
+
         const book = await BookModel.findById(bookId);
         if (!book) {
             res.status(404).json({ message: 'Could not find book with id: ' + bookId });
