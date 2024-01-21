@@ -34,9 +34,9 @@ router.post('/login', async (req, res) => {
             setFileName(result._id.toString());
         }
         else
-            res.status(404).send('User not found!');
+            res.status(404).json({ message: 'User not found!' });
     } catch (e) {
-        res.status(500).send({ message: e.message });
+        res.status(500).json({ message: e.message });
     }
 });
 
@@ -111,7 +111,7 @@ router.route('/')
         try {
             const user = req.user;
             await user.deleteOne();
-            res.send("Deleted user with username: " + user.username);
+            res.json({ message: "Deleted user with username: " + user.username });
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
@@ -184,14 +184,21 @@ router.get('/favorite', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/libraryCard', async (req, res) => {
     try {
         const user = req.user;
         const cardId = req.body.cardId;
         const cardPassword = req.body.cardPassword;
+        const checkLinkedCard = await UserModel.findOne({ cardId: cardId });
+
+        if (checkLinkedCard) {
+            res.status(400).json({ message: 'This card is already linked to an account' });
+            return;
+        }
+
         let query = {};
         if (cardId)
-            query._id = new RegExp('^' + cardId + '$');
+            query._id = cardId;
         if (cardPassword)
             query.password = new RegExp('^' + cardPassword + '$');
 
@@ -199,16 +206,29 @@ router.post('/login', async (req, res) => {
             query = undefined;
 
         const result = await LibraryCardModel.findOne(query);
-        if (result === null) {
-            res.status(404).send('Library card not found!');
+        if (!result) {
+            res.status(404).json({ message: 'Library card not found!' });
             return;
         }
 
         user.cardId = cardId;
         user.save();
-        res.status(200).send('Library card linked!');
+        res.status(200).json({ message: 'Library card linked!' });
     } catch (e) {
-        res.status(500).send({ message: e.message });
+        res.status(500).json({ message: e.message });
+    }
+});
+
+router.delete('/libraryCard', async (req, res) => {
+    try {
+        const user = req.user;
+        if (user.cardId) {
+            user.cardId = null;
+            user.save();
+        }
+        res.status(200).json({ message: 'Library card unlinked!' });
+    } catch (e) {
+        res.status(500).json({ message: e.message });
     }
 });
 

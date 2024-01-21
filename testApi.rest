@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "username": "daotanp",
-    "password": "12121212"
+    "password": "123123123"
 }
 
 ###
@@ -19,7 +19,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3000/user
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhb3RhbnAiLCJpYXQiOjE3MDU1MTMyNTksImV4cCI6MTcwNTUxNjg1OX0.bS5z1RPdLyEL8TpbhSlB5mCVZUPgTNwDhREPH2NlYos
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhb3RhbnAiLCJpYXQiOjE3MDU4NDg3ODYsImV4cCI6MTcwNTg1MjM4Nn0.Pk6Poyx1xFZW1DJDFRWaxVfEcQ7PFiFS1yjpnuApsIE
 
 ###
 
@@ -1016,6 +1016,17 @@ Content-Type: application/json
 
 {
     "bookId": "65805a7d3ace346128de5052"
+}
+
+###
+
+POST http://localhost:3000/user/libraryCard
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhb3RhbnAiLCJpYXQiOjE3MDU4NDg3ODYsImV4cCI6MTcwNTg1MjM4Nn0.Pk6Poyx1xFZW1DJDFRWaxVfEcQ7PFiFS1yjpnuApsIE
+Content-Type: application/json
+
+{
+    "cardId": "65ad2813041e05355e803318",
+    "cardPassword": "12345678"
 }
 
 ###
