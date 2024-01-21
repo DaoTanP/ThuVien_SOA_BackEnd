@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const UserModel = require('../models/user');
 const BookModel = require('../models/book');
+const LibraryCardModel = require('../models/libraryCard');
 const { userExists, getUserByUsername } = require('../middlewares/user');
 const { verifyToken, generateToken } = require('../middlewares/auth');
 const { uploadImages, setStorageDirectory, setFileName } = require('../middlewares/file');
@@ -14,9 +15,9 @@ router.post('/login', async (req, res) => {
         const password = req.body.password;
         let query = {};
         if (username)
-            query.username = new RegExp('^' + username + '$', 'i');
+            query.username = new RegExp('^' + username + '$');
         if (password)
-            query.password = new RegExp('^' + password + '$', 'i');
+            query.password = new RegExp('^' + password + '$');
 
         if (Object.keys(query).length === 0)
             query = undefined;
@@ -183,85 +184,32 @@ router.get('/favorite', async (req, res) => {
     }
 });
 
-router.post('/addToCart', async (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const user = req.user;
-        const book = await BookModel.findById(req.body.bookId);
-        if (!book) {
-            res.status(404).json({ message: 'Book not found' });
+        const cardId = req.body.cardId;
+        const cardPassword = req.body.cardPassword;
+        let query = {};
+        if (cardId)
+            query._id = new RegExp('^' + cardId + '$');
+        if (cardPassword)
+            query.password = new RegExp('^' + cardPassword + '$');
+
+        if (Object.keys(query).length === 0)
+            query = undefined;
+
+        const result = await LibraryCardModel.findOne(query);
+        if (result === null) {
+            res.status(404).send('Library card not found!');
             return;
         }
 
-        if (user.cart.indexOf(req.body.bookId) === -1)
-            user.cart.push(req.body.bookId);
-
+        user.cardId = cardId;
         user.save();
-
-        res.status(200).json({ message: 'Added to cart' });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(200).send('Library card linked!');
+    } catch (e) {
+        res.status(500).send({ message: e.message });
     }
 });
-
-router.post('/removeFromCart', async (req, res) => {
-    try {
-        const user = req.user;
-        if (user.cart.length < 1 || user.cart.indexOf(req.body.bookId) === -1) {
-            res.status(400).json({ message: 'Book has not been added to cart' });
-            return;
-        }
-
-        user.cart.splice(user.cart.indexOf(req.body.bookId), 1);
-        user.save();
-
-        res.status(200).json({ message: 'Removed from cart' });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-});
-
-router.post('/isInCart', async (req, res) => {
-    try {
-        const user = req.user;
-        if (!user.cart || user.cart.indexOf(req.body.bookId) === -1) {
-            res.send(false);
-            return;
-        }
-        res.send(true);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-});
-
-router.get('/cart', async (req, res) => {
-    try {
-        const cartBookIds = req.user.cart;
-        const cartBooks = [];
-        await Promise.all(cartBookIds.map(async id => {
-            const book = await BookModel.findById(id);
-            cartBooks.push(book);
-        }));
-        cartBooks.forEach(book => {
-            book.images = book.images.map(image => req.protocol + "://" + req.hostname + ':3000/public/images/book/' + image);
-        });
-        res.json(cartBooks);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-});
-
-// router.route('/:id')
-//     .get(getUserById, (req, res) => {
-//         res.json(req.user);
-//     })
-//     .delete(getUserById, async (req, res) => {
-//         try {
-//             const user = req.user;
-//             await user.deleteOne();
-//             res.send("Deleted user with username: " + user.username);
-//         } catch (error) {
-//             res.status(400).json({ message: error.message })
-//         }
-//     });
 
 module.exports = router;
