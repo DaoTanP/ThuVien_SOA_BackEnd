@@ -1082,11 +1082,16 @@ Content-Type: application/json
 ###
 
 POST http://localhost:3000/borrow
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhb3RhbnAiLCJpYXQiOjE3MDU4NTE4NTgsImV4cCI6MTcwNTg1NTQ1OH0.KWt5-ChBVJhvlxi-c58siugfPQ8NCHOBT8v40oN4GcU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhb3RhbnAiLCJpYXQiOjE3MDU4NTUxOTMsImV4cCI6MTcwNTg1ODc5M30.PGOnPWf4JQLqXuiai5dY_0HcXPNAhGC1RI-v8getrmo
 Content-Type: application/json
 
 {
     "bookId": "65a7e9d0aaf3bcf9bbf0a6e2",
-    "borrowDate": "2024-01-10",
-    "returnDate": "2024-01-25"
+    "borrowDate": "2024-02-05",
+    "returnDate": "2024-02-07"
 }
+
+###
+
+GET  http://localhost:3000/borrow/history
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhb3RhbnAiLCJpYXQiOjE3MDU4NTUxOTMsImV4cCI6MTcwNTg1ODc5M30.PGOnPWf4JQLqXuiai5dY_0HcXPNAhGC1RI-v8getrmo
